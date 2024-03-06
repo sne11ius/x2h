@@ -6,7 +6,6 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigRenderOptions
 import io.github.projectmapk.jackson.module.kogera.registerKotlinModule
-import java.util.*
 
 class X2K : CliktCommand(
     help = """Convert from YAML to HOCON format.
@@ -20,7 +19,7 @@ class X2K : CliktCommand(
     epilog = """
         |Project info @ https://github.com/sne11ius/x2h
         |
-        |Built from revision ${Config.version} (https://github.com/sne11ius/x2h/commit/${Config.version})
+        |Built from revision $gitHash (https://github.com/sne11ius/x2h/commit/${gitHash})
         """.trimMargin()
 ) {
     val inputFile by option(
@@ -61,14 +60,4 @@ fun prettyPrint(input: String): String {
     return config.root().render(options)
 }
 
-object Config {
-    private val versionProps by lazy {
-        Properties().also {
-            it.load(this.javaClass.getResourceAsStream("/version.properties"))
-        }
-    }
-
-    val version by lazy {
-        versionProps.getProperty("version") ?: "no version"
-    }
-}
+val gitHash = GVersion.GIT_SHA.take(6)

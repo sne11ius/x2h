@@ -1,14 +1,8 @@
-import com.palantir.gradle.gitversion.VersionDetails
-import java.util.*
-
 plugins {
     kotlin("jvm") version "1.9.22"
     application
-    id("com.palantir.git-version") version "3.0.0"
+    id("com.peterabeles.gversion") version "1.10.2"
 }
-val versionDetails: groovy.lang.Closure<VersionDetails> by extra
-val details = versionDetails()
-version = details.gitHash
 
 repositories {
     mavenCentral()
@@ -46,12 +40,10 @@ kotlin {
     jvmToolchain(21)
 }
 
-tasks.withType<ProcessResources>() {
-    doLast {
-        val propertiesFile = file("${layout.buildDirectory.get()}/resources/main/version.properties")
-        propertiesFile.parentFile.mkdirs()
-        val properties = Properties()
-        properties.setProperty("version", rootProject.version.toString())
-        propertiesFile.writer().use { properties.store(it, null) }
-    }
+gversion {
+    srcDir = "src/main/kotlin/"
+}
+
+tasks.compileKotlin {
+    dependsOn.add(tasks.createVersionFile)
 }
