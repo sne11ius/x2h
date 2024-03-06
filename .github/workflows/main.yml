@@ -22,48 +22,40 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+         # - os: ubuntu-latest
+         #   file: x2h
+         #   args: --best --lzma
+         #   strip: true
+          - os: windows-latest
             file: x2h
-            args: --best --lzma
-            strip: true
-          #- os: windows-latest
-          #  file: x2h.exe
-          #  args: -9
-          #  strip: false
-          #- os: macos-latest
-          #  file: x2h
-          #  args: --best
-          #  strip: true
+            args: -9
+            strip: false
+         # - os: macos-latest
+         #   file: x2h-mac
+         #   args: --best
+         #   strip: true
     steps:
     - uses: actions/checkout@v4
-   # - uses: graalvm/setup-graalvm@v1
-   #   with:
-   #     java-version: '21'
-   #     distribution: 'graalvm'
-   #     github-token: ${{ secrets.GITHUB_TOKEN }}
-   #     native-image-job-reports: 'true'
-   # - name: Build
-   #   run: |
-   #     gradle build
-   #     native-image --no-fallback -jar build/libs/x2h.jar
-   # - name: Compress binary
-   #   uses: svenstaro/upx-action@v2
-   #   with:
-   #     file: ${{ matrix.file }}
-   #     args: ${{ matrix.args }}
-   #     strip: ${{ matrix.strip }}
-    - name: Upload binary
-      uses: skx/github-action-publish-binaries@release-2.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: graalvm/setup-graalvm@v1
       with:
-        releaseId: ${{ needs.create_release.outputs.id }}
-        args: 'x2h*'
-
-
-    # - name: Upload binary
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: x2h-${{ matrix.os }}
-    #     path: x2h*
-#${{ fromJSON(steps.create-release.outputs.id) }}
+        java-version: '21'
+        distribution: 'graalvm'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        native-image-job-reports: 'true'
+    - name: Build
+      run: |
+        gradle build
+        native-image --no-fallback -jar build/libs/x2h.jar ${{ matrix.file }}
+        ls
+    - name: Compress binary
+      uses: svenstaro/upx-action@v2
+      with:
+        files: |
+          x2h*
+        args: ${{ matrix.args }}
+        strip: ${{ matrix.strip }}
+    - name: Upload binary
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ needs.create_release.outputs.tag-name }}
+        files: x2h*
