@@ -6,7 +6,8 @@ Command line utility to convert YAML to HOCON
 
 - Read from stdin, write to stdout: just `x2h`
 - Convert a file to stdout: `cat my-file.yaml | x2h`
-- Convert using input file and output file `x2h -i in-file.yaml -o out-file.conf`
+- Convert using input file and output file
+  `x2h -i in-file.yaml -o out-file.conf`
 
 ```
 Options:
@@ -18,7 +19,13 @@ is used.
 
 ## Releases
 
-You can always find the current release under [releases](https://github.com/sne11ius/x2h/releases).
+You can find the current release under
+[releases](https://github.com/sne11ius/x2h/releases).
+
+## Windows (& probably Mac)
+
+The binaries are compressed with [upx](https://upx.github.io/) and not signed
+in any way. Your OS will probably prevent you from running them.
 
 ## Build
 
